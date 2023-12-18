@@ -11,7 +11,7 @@ jobs:
 
     env:
     #use value from repository variable
-      BASE_IMAGE: "${{variable.image}}"
+      BASE_IMAGE: "${{var.image}}"
       ORIGINAL_TAG: "0.91.0"
   
     steps:
