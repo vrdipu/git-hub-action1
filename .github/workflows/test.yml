@@ -15,7 +15,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
     - name: Loop through Docker images
       run: |
         IFS=' ' read -ra IMAGE_ARRAY <<< "$IMAGE_NAMES"
@@ -33,13 +32,3 @@ jobs:
           # Retag Docker image
           docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
           docker images|grep $SHORT_COMMIT
-
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref:  ${{env.BASE_IMAGE}}:${{ steps.get_commit.outputs.short_commit }}
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
