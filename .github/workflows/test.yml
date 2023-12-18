@@ -23,8 +23,8 @@ jobs:
 
     - name: Print environment variable values
       run: |
-        echo "BASE_IMAGE: ${{metrix.BASE_IMAGE}}"
-        echo "ORIGINAL_TAG: ${{metrix.RIGINAL_TAG}}"
+        echo "BASE_IMAGE: ${{matrix.BASE_IMAGE}}"
+        echo "ORIGINAL_TAG: ${{matrix.RIGINAL_TAG}}"
 
     - name: Pull original Docker image
       run: |
