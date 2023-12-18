@@ -24,7 +24,7 @@ jobs:
 
     - name: Pull original Docker image
       run: |
-        docker pull $BASE_IMAGE:$ORIGINAL_TAG
+        docker pull ${{env.BASE_IMAGE}}:${{env.ORIGINAL_TAG}}
 
     - name: Get short commit SHA
       id: get_commit
