@@ -21,9 +21,12 @@ jobs:
       run: |
         echo "BASE_IMAGE: $BASE_IMAGE"
         echo "ORIGINAL_TAG: $ORIGINAL_TAG"
+        
 
     - name: Pull original Docker image
-      run: docker pull $BASE_IMAGE:$ORIGINAL_TAG
+      run: |
+        docker pull $BASE_IMAGE:$ORIGINAL_TAG
+        docker tag $BASE_IMAGE:$ORIGINAL_TAG $BASE_IMAGE:${{ steps.get_commit.outputs.short_commit }}
 
     - name: Get short commit SHA
       id: get_commit
