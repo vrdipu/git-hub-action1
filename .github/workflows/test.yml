@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BASE_IMAGE: "otel/opentelemetry-collector"
+    #use value from repository variable
+      BASE_IMAGE: "${{variable.image}}"
       ORIGINAL_TAG: "0.91.0"
   
     steps:
