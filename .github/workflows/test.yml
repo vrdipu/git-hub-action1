@@ -13,14 +13,13 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          docker pull dirajan/mongo:v6
-          docker run -d -p 3000:3000 dirajan/mongo:v6
+          docker pull otel/opentelemetry-collector:0.91.0
       - name: Get short commit SHA
         id: get_commit
         run: echo "::set-output name=short_commit::$(git rev-parse --short ${{ github.sha }})"
       - name: Retag Docker image
         run: |
-            docker tag dirajan/mongo:v6 dirajan/mongo:${{ steps.get_commit.outputs.short_commit }}
+            docker tag otel/opentelemetry-collector:0.91.0  otel/opentelemetry-collector:${{ steps.get_commit.outputs.short_commit }}
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
