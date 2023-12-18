@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 your/other-image:latest"
+      IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 dirajan/mongo:v6"
   
     steps:
     - name: Checkout repository
@@ -31,9 +31,9 @@ jobs:
           echo "Image is $IMAGE_NAME_TAGLESS"
 
           # Retag Docker image
-          docker tag $IMAGE_NAME $IMAGE_NAME:$SHORT_COMMIT
+          docker tag $IMAGE_NAME IMAGE_NAME_TAGLESS:$SHORT_COMMIT
 
           # Run Trivy vulnerability scanner
-          docker run --rm -v $(pwd):/workdir aquasec/trivy $IMAGE_NAME:$SHORT_COMMIT
+          docker run --rm -v $(pwd):/workdir aquasec/trivy IMAGE_NAME_TAGLESS:$SHORT_COMMIT
         done
 
