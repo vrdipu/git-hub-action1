@@ -10,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-    #use value from repository variable
-      BASE_IMAGE: "${{var.image}}"
+      BASE_IMAGE: "otel/opentelemetry-collector"
       ORIGINAL_TAG: "0.91.0"
   
     steps:
@@ -43,3 +42,4 @@ jobs:
         ignore-unfixed: true
         vuln-type: 'os,library'
         severity: 'CRITICAL,HIGH'
+
