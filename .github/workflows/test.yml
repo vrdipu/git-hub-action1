@@ -22,11 +22,11 @@ jobs:
         run: echo "::set-output name=short_commit::$(git rev-parse --short ${{ github.sha }})"
       - name: Retag Docker image
         run: |
-            docker tag $IMAGE:0.91.0  $IMAGE:${{ steps.get_commit.outputs.short_commit }}
+            docker tag "$IMAGE":0.91.0  "$IMAGE":${{ steps.get_commit.outputs.short_commit }}
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ' $IMAGE:${{ steps.get_commit.outputs.short_commit }}'
+          image-ref: $IMAGE:'${{ steps.get_commit.outputs.short_commit }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
