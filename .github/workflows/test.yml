@@ -30,7 +30,7 @@ jobs:
           echo "Image is $IMAGE_NAME_TAGLESS"
           # Retag Docker image
           docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
-          IMAGE_SCAN=docker images|grep $SHORT_COMMIT|awk '{print $1} |tr "\n" " "
+          IMAGE_SCAN=docker images|grep $SHORT_COMMIT|awk '{print $1}' |tr "\n" " "
           echo $IMAGE_SCAN
           # Run Trivy vulnerability scanner
           #docker run --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
