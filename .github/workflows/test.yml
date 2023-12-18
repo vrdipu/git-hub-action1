@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE: "otel/opentelemetry-collector"
+  
     steps:
       - uses: actions/checkout@v3
       - name: Run a one-line script
@@ -13,17 +16,17 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          docker pull otel/opentelemetry-collector:0.91.0
+          docker pull $IMAGE:0.91.0
       - name: Get short commit SHA
         id: get_commit
         run: echo "::set-output name=short_commit::$(git rev-parse --short ${{ github.sha }})"
       - name: Retag Docker image
         run: |
-            docker tag otel/opentelemetry-collector:0.91.0  otel/opentelemetry-collector:${{ steps.get_commit.outputs.short_commit }}
+            docker tag $IMAGE:0.91.0  $IMAGE:${{ steps.get_commit.outputs.short_commit }}
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ' otel/opentelemetry-collector:${{ steps.get_commit.outputs.short_commit }}'
+          image-ref: ' $IMAGE:${{ steps.get_commit.outputs.short_commit }}'
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
