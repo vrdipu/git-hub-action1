@@ -1,0 +1,36 @@
+name: Docker Image Scan Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  scan-docker-images:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 dirajan/mongo:v6"
+  
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Loop through Docker images
+      run: |
+        IFS=' ' read -ra IMAGE_ARRAY <<< "$IMAGE_NAMES"
+        for IMAGE_NAME in "${IMAGE_ARRAY[@]}"; do
+          echo "Processing image: $IMAGE_NAME"
+
+          # Pull Docker image
+          docker pull $IMAGE_NAME
+
+          # Get short commit SHA
+          SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
+
+          # Retag Docker image
+          docker tag $IMAGE_NAME $IMAGE_NAME:$SHORT_COMMIT
+
+          # Run Trivy vulnerability scanner
+          docker run --rm -v $(pwd):/workdir aquasec/trivy $IMAGE_NAME:$SHORT_COMMIT
+        done
