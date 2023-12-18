@@ -32,7 +32,7 @@ jobs:
 
           # Retag Docker image
           docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
-          docker images|grep 
+          docker images|grep $SHORT_COMMIT
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
