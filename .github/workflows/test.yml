@@ -1,3 +1,4 @@
+
 name: Docker Image Scan Workflow
 
 on:
@@ -15,20 +16,21 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Loop through Docker images
       run: |
         IFS=' ' read -ra IMAGE_ARRAY <<< "$IMAGE_NAMES"
         for IMAGE_NAME in "${IMAGE_ARRAY[@]}"; do
           echo "Processing image: $IMAGE_NAME"
-
           # Pull Docker image
           docker pull $IMAGE_NAME
-
           # Get short commit SHA
           SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
           IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
           echo "Image is $IMAGE_NAME_TAGLESS"
-
           # Retag Docker image
           docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
-          docker images|grep $SHORT_COMMIT
+          docker images
+          # Run Trivy vulnerability scanner
+          docker run --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+        done
