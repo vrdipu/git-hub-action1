@@ -21,3 +21,6 @@ jobs:
       - name: Retag Docker image
         run: |
             docker tag dirajan/mongo:v6 dirajan/mongo:${{ steps.get_commit.outputs.short_commit }}
+      - name: Scan Docker image
+        run: |
+              docker run --rm -v $(pwd):/workdir aquasec/trivy dirajan/mongo:${{ steps.get_commit.outputs.short_commit }}
