@@ -15,3 +15,4 @@ jobs:
           echo Add other actions to build,
           docker pull dirajan/mongo:v6
           docker run -d -p 3000:3000 dirajan/mongo:v6
+          docker ps 
