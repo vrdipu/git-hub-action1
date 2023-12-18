@@ -32,7 +32,7 @@ jobs:
 
     - name: Retag Docker image
       run: |
-        docker tag $BASE_IMAGE:$ORIGINAL_TAG $BASE_IMAGE:${{ steps.get_commit.outputs.short_commit }}
+        docker tag  ${{env.BASE_IMAGE}}:${{env.ORIGINAL_TAG}} ${{env.BASE_IMAGE}}:${{ steps.get_commit.outputs.short_commit }}
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
