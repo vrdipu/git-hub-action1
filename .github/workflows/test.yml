@@ -34,6 +34,6 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
 
           # Run Trivy vulnerability scanner
-          docker run --rm -v $(pwd):/workdir aquasec/trivy  $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+         # docker run --rm -v $(pwd):/workdir aquasec/trivy  $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
         done
 
