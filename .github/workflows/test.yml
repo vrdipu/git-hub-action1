@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BASE_IMAGE: "otel/opentelemetry-collector"
-      ORIGINAL_TAG: "0.91.0"
+      BASE_IMAGE: "dirajan/mongo"
+      ORIGINAL_TAG: "v6"
   
     steps:
     - name: Checkout repository
