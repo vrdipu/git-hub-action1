@@ -6,45 +6,32 @@ on:
       - main
 
 jobs:
-  scan-docker-image:
+  scan-docker-images:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ORIGINAL_TAG:: ["v6", "0.91.0"]
-        BASE_IMAGE: ["dirajan/mongo", "otel/opentelemetry-collector"]
 
-   # env:
-   #   BASE_IMAGE: "otel/opentelemetry-collector"
-   #   ORIGINAL_TAG: "0.91.0"
+    env:
+      IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 your/other-image:latest"
   
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Print environment variable values
+    - name: Loop through Docker images
       run: |
-        echo "BASE_IMAGE: ${{matrix.BASE_IMAGE}}"
-        echo "ORIGINAL_TAG: ${{matrix.RIGINAL_TAG}}"
+        IFS=' ' read -ra IMAGE_ARRAY <<< "$IMAGE_NAMES"
+        for IMAGE_NAME in "${IMAGE_ARRAY[@]}"; do
+          echo "Processing image: $IMAGE_NAME"
 
-    - name: Pull original Docker image
-      run: |
-        docker pull ${{env.BASE_IMAGE}}:${{env.ORIGINAL_TAG}}
+          # Pull Docker image
+          docker pull $IMAGE_NAME
 
-    - name: Get short commit SHA
-      id: get_commit
-      run: echo "::set-output name=short_commit::$(git rev-parse --short ${{ github.sha }})"
+          # Get short commit SHA
+          SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
 
-    - name: Retag Docker image
-      run: |
-        docker tag  ${{env.BASE_IMAGE}}:${{env.ORIGINAL_TAG}} ${{env.BASE_IMAGE}}:${{ steps.get_commit.outputs.short_commit }}
+          # Retag Docker image
+          docker tag $IMAGE_NAME $IMAGE_NAME:$SHORT_COMMIT
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref:  ${{env.BASE_IMAGE}}:${{ steps.get_commit.outputs.short_commit }}
-        format: 'table'
-        exit-code: '1'
-        ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+          # Run Trivy vulnerability scanner
+          docker run --rm -v $(pwd):/workdir aquasec/trivy $IMAGE_NAME:$SHORT_COMMIT
+        done
 
