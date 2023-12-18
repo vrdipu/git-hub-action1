@@ -8,10 +8,14 @@ on:
 jobs:
   scan-docker-image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ORIGINAL_TAG:: ["v6", "0.91.0"]
+        BASE_IMAGE: ["dirajan/mongo", "otel/opentelemetry-collector"]
 
-    env:
-      BASE_IMAGE: "otel/opentelemetry-collector"
-      ORIGINAL_TAG: "0.91.0"
+   # env:
+   #   BASE_IMAGE: "otel/opentelemetry-collector"
+   #   ORIGINAL_TAG: "0.91.0"
   
     steps:
     - name: Checkout repository
@@ -19,8 +23,8 @@ jobs:
 
     - name: Print environment variable values
       run: |
-        echo "BASE_IMAGE: $BASE_IMAGE"
-        echo "ORIGINAL_TAG: $ORIGINAL_TAG"
+        echo "BASE_IMAGE: ${{metrix.BASE_IMAGE}}"
+        echo "ORIGINAL_TAG: ${{metrix.RIGINAL_TAG}}"
 
     - name: Pull original Docker image
       run: |
