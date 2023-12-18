@@ -33,5 +33,6 @@ jobs:
           IMAGE_SCAN=$(docker image|grep $SHORT_COMMIT|awk '{print $1}' |tr "\n" " ")
           echo $IMAGE_SCAN
           # Run Trivy vulnerability scanner
-          docker run -u 0 --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+          #docker run -u 0 --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/tmp/.cache/ aquasec/trivy:0.10.0 $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
         done
