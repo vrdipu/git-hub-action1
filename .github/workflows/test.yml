@@ -13,4 +13,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          echo test, and deploy your project.
+          docker pull dirajan/mongo:v6
+          docker run -d -p 3000:3000 dirajan/mongo:v6
