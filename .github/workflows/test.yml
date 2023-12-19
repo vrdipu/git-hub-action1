@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  scan-docker-images:
+  Get_Docker_Images:
     runs-on: ubuntu-latest
 
     env:
@@ -32,11 +32,18 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
           IMAGE_SCAN=$(docker image ls|grep $SHORT_COMMIT|awk '{print $1}' |tr "\n" " ")
           echo $IMAGE_SCAN
+
+          run: echo "::set-output name=my_variable::$IMAGE_SCAN"
           # Run Trivy vulnerability scanner
           #docker run -u 0 --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
           #docker run -u 0 --rm  aquasec/trivy image  $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
         done
-    - name: Create Tagged Images to Scan 
-      run: |
-        echo "$IMAGE_SCAN"
+
+  job2:
+    runs-on: ubuntu-latest
+    needs: Get_Docker_Images
+
+    steps:
+    - name: Use variable
+      run: echo "Variable value is ${{ needs.Get_Docker_Images.outputs.my_variable }}"
     
