@@ -33,7 +33,7 @@ jobs:
           IMAGE_SCAN=$(docker image ls|grep $SHORT_COMMIT|awk '{print $1}' |tr "\n" " ")
           echo $IMAGE_SCAN
 
-          run: echo "::set-output name=my_variable::$IMAGE_SCAN"
+          echo "::set-output name=my_variable::$IMAGE_SCAN"
           # Run Trivy vulnerability scanner
           #docker run -u 0 --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
           #docker run -u 0 --rm  aquasec/trivy image  $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
