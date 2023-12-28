@@ -41,7 +41,7 @@ jobs:
           IMAGE_SCAN=$(docker image ls|grep $SHORT_COMMIT|awk '{print $1}' |tr "\n" " ")
         done
 
-  kICS SCAN:
+  kICS-SCAN:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
