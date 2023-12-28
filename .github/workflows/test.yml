@@ -31,6 +31,7 @@ jobs:
           echo "Processing image: $IMAGE_NAME"
           # Pull Docker image
           docker pull $IMAGE_NAME
+          trivy image "$IMAGE_NAME"
           # Get short commit SHA
           SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
           IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
