@@ -16,6 +16,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    - name: install trivy
+      run: |
+          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy -y
 
     - name: Loop through Docker images
       run: |
@@ -34,9 +41,12 @@ jobs:
           echo $IMAGE_SCAN
 
           echo "::set-output name=my_variable::$IMAGE_SCAN"
-          # Run Trivy vulnerability scanner
-          #docker run -u 0 --rm -v $(pwd):/workdir aquasec/trivy image $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
-          #docker run -u 0 --rm  aquasec/trivy image  $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+          sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy -y
+          
         done
 
   job2:
