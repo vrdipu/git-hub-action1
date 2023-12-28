@@ -51,8 +51,8 @@ jobs:
       uses: checkmarx/kics-github-action@v1.7.0
       with:
         path: './test/kubernetes.tf'
-        output_path: myResults/
+        output_path: test/
     - name: display kics results
       run: |
-        cat myResults/results.json
+        cat test/results.json
     
