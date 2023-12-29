@@ -39,7 +39,7 @@ jobs:
           echo "Image is $IMAGE_NAME_TAGLESS"
           # Retag Docker image
           sudo docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
-          IMAGE_SCAN=$(docker image ls|grep $SHORT_COMMIT|awk '{print $1":"$2}' |tr "\n" " ")
+          IMAGE_SCAN=$(sudo docker image ls|grep $SHORT_COMMIT|awk '{print $1":"$2}' |tr "\n" " ")
           echo $IMAGE_SCAN
         done
     - name: Artifacts Upload 
@@ -54,7 +54,7 @@ jobs:
            ./*.trivy.html
 
   kICS-SCAN:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     continue-on-error: true
     steps:
     - uses: actions/checkout@v3
