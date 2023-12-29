@@ -51,7 +51,7 @@ jobs:
       with:
           name: dist-without-markdown
           path: |
-            *.trivy.html
+           ./*.trivy.html
 
   kICS-SCAN:
     runs-on: ubuntu-latest
