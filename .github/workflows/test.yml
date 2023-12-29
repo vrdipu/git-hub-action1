@@ -42,6 +42,9 @@ jobs:
           IMAGE_SCAN=$(docker image ls|grep $SHORT_COMMIT|awk '{print $1":"$2}' |tr "\n" " ")
           echo $IMAGE_SCAN
         done
+    - name: Artifacts Upload 
+      run: |
+       cat *.html
 
   kICS-SCAN:
     runs-on: ubuntu-latest
