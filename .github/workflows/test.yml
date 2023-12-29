@@ -8,7 +8,7 @@ on:
 
 jobs:
   Get_Docker_Images:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     env:
       IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 quay.io/jetstack/cert-manager-webhook:v1.11.0 quay.io/jetstack/cert-manager-acmesolver:v1.11.0"
