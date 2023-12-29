@@ -30,15 +30,15 @@ jobs:
         for IMAGE_NAME in "${IMAGE_ARRAY[@]}"; do
           echo "Processing image: $IMAGE_NAME"
           # Pull Docker image
-          docker pull $IMAGE_NAME
+          sudo docker pull $IMAGE_NAME
           IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
-          trivy image --format table  --output  `echo $IMAGE_NAME_TAGLESS.trivy.html|awk -F "/" '{print $NF}'` "$IMAGE_NAME"
+          sudo trivy image --format table  --output  `echo $IMAGE_NAME_TAGLESS.trivy.html|awk -F "/" '{print $NF}'` "$IMAGE_NAME"
           # Get short commit SHA
           SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
           IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
           echo "Image is $IMAGE_NAME_TAGLESS"
           # Retag Docker image
-          docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+          sudo docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
           IMAGE_SCAN=$(docker image ls|grep $SHORT_COMMIT|awk '{print $1":"$2}' |tr "\n" " ")
           echo $IMAGE_SCAN
         done
