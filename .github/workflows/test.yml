@@ -67,4 +67,9 @@ jobs:
     - name: display kics results
       run: |
         cat test/results.json
-    
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+          name: Kics-Result
+          path: |
+            test
