@@ -32,7 +32,7 @@ jobs:
           # Pull Docker image
           docker pull $IMAGE_NAME
           trivy image --format table  --output  `echo $IMAGE_NAME.html|awk -F "/" '{print $NF}'` "$IMAGE_NAME"
-          ls  `echo $IMAGE_NAME.html|awk -F "/" '{print $NF}'`
+          cat  `echo $IMAGE_NAME.html|awk -F "/" '{print $NF}'`
           # Get short commit SHA
           SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
           IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
