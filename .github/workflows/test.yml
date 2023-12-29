@@ -46,6 +46,13 @@ jobs:
       run: |
        cat *.trivy.html
 
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+          name: dist-without-markdown
+          path: |
+            *.trivy.html
+
   kICS-SCAN:
     runs-on: ubuntu-latest
     continue-on-error: true
