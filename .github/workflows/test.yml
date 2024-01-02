@@ -4,7 +4,7 @@ name: Docker Image Scan Workflow
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   Get_Docker_Images:
@@ -61,7 +61,7 @@ jobs:
     - name: run kics Scan
       uses: checkmarx/kics-github-action@v1.7.0
       with:
-        path: './test/kubernetes.tf'
+        path: './helm/cert-manager'
         ignore_on_exit: results
         output_path: test/
     - name: display kics results
@@ -73,3 +73,129 @@ jobs:
           name: Kics-Result
           path: |
             test
+  Get_Docker_Images_certmanager:
+   runs-on: ubuntu-latest
+
+   env:
+    IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 quay.io/jetstack/cert-manager-webhook:v1.11.0 quay.io/jetstack/cert-manager-acmesolver:v1.11.0"
+
+   steps:
+   - name: Checkout repository
+     uses: actions/checkout@v4
+   - name: install trivy
+     run: |
+        sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install trivy -y
+
+   - name: Loop through Docker images
+     run: |
+      IFS=' ' read -ra IMAGE_ARRAY <<< "$IMAGE_NAMES"
+      for IMAGE_NAME in "${IMAGE_ARRAY[@]}"; do
+        echo "Processing image: $IMAGE_NAME"
+        # Pull Docker image
+        sudo docker pull $IMAGE_NAME
+        IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
+        sudo trivy image --format table  --output  `echo $IMAGE_NAME_TAGLESS.trivy.html|awk -F "/" '{print $NF}'` "$IMAGE_NAME"
+        # Get short commit SHA
+        SHORT_COMMIT=$(git rev-parse --short ${{ github.sha }})
+        IMAGE_NAME_TAGLESS=$(echo $IMAGE_NAME |awk -F ":" '{print $1}')
+        echo "Image is $IMAGE_NAME_TAGLESS"
+        # Retag Docker image
+        sudo docker tag $IMAGE_NAME $IMAGE_NAME_TAGLESS:$SHORT_COMMIT
+        IMAGE_SCAN=$(sudo docker image ls|grep $SHORT_COMMIT|awk '{print $1":"$2}' |tr "\n" " ")
+        echo $IMAGE_SCAN
+      done
+   - name: Artifacts Upload 
+     run: |
+      cat *.trivy.html
+
+   - name: Archive production artifacts
+     uses: actions/upload-artifact@v3
+     with:
+        name: Trivy-Scan-result
+        path: |
+         ./*.trivy.html
+
+  kICS-SCAN_certmanager:
+   runs-on: ubuntu-latest
+   continue-on-error: true
+   steps:
+   - uses: actions/checkout@v3
+   - name: run kics Scan
+     uses: checkmarx/kics-github-action@v1.7.0
+     with:
+       path: './helm/cert-manager'
+       ignore_on_exit: results
+       output_path: test/
+   - name: display kics results
+     run: |
+      cat test/results.json
+   - name: Archive production artifacts
+     uses: actions/upload-artifact@v3
+     with:
+        name: Kics-Result
+        path: |
+          test 
+  HemlDeployment-certmanager: 
+     runs-on: ubuntu-latest
+     continue-on-error: true
+     needs: [kICS-SCAN,kICS-SCAN_certmanager,Get_Docker_Images,Get_Docker_Images_certmanager]
+     steps:
+     - uses: actions/checkout@v3
+  HemlDeployment-obs-operator: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-certmanager]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-obs-Gatewaycollector: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-operator]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-obs-javaAgent: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-Gatewaycollector]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-obs-daemonsetcollector: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-Gatewaycollector]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-obs-clusterreceiver: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-Gatewaycollector]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-obs-cluster-loadbalancer: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-Gatewaycollector]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-obs-metrics-collecor: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-Gatewaycollector]
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-greeting-app-test: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-obs-metrics-collecor,HemlDeployment-obs-cluster-loadbalancer,HemlDeployment-obs-clusterreceiver,HemlDeployment-obs-daemonsetcollector,HemlDeployment-obs-javaAgent]   
+    steps:
+    - uses: actions/checkout@v3
+  HemlDeployment-testjob: 
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [HemlDeployment-greeting-app-test]   
+    steps:
+    - uses: actions/checkout@v3
