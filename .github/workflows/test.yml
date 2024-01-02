@@ -8,7 +8,7 @@ on:
 
 jobs:
   Get_Docker_Images:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     env:
       IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 quay.io/jetstack/cert-manager-webhook:v1.11.0 quay.io/jetstack/cert-manager-acmesolver:v1.11.0"
@@ -54,7 +54,7 @@ jobs:
            ./*.trivy.html
 
   kICS-SCAN:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     continue-on-error: true
     steps:
     - uses: actions/checkout@v3
