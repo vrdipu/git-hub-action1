@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAMES: "otel/opentelemetry-collector:0.91.0 quay.io/jetstack/cert-manager-webhook:v1.11.0 quay.io/jetstack/cert-manager-acmesolver:v1.11.0"
+      IMAGE_NAMES: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.71.0"
   
     steps:
     - name: Checkout repository
