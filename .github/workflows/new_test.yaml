@@ -6,9 +6,7 @@ on:
       name:
         type: choice
         description: Who to greet
-        options: 
-        - monalisa
-        - cschleiden
+        options: ["dev", "int", "intprod", "prod"]    
       message:
         required: true
       use-emoji:
