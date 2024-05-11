@@ -1,5 +1,4 @@
 name: Docker Image Scan Workflow
-
 on:
   push:
     branches:
