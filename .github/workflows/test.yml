@@ -6,7 +6,7 @@ on:
 
 jobs:
   Get_Docker_Images:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     env:
 
